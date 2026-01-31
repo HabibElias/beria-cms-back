@@ -5,6 +5,7 @@ cd /var/www/html
 
 echo "Ensuring storage permissions"
 mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views
+chown -R www-data:www-data storage bootstrap/cache
 chmod -R 775 storage bootstrap/cache
 
 echo "Installing PHP dependencies"
