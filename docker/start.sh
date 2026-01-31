@@ -13,7 +13,7 @@ composer install --no-dev --optimize-autoloader
 echo "Caching configuration"
 php artisan config:cache
 php artisan route:cache
-php artisan view:cache
+php artisan view:cache  
 
 if [[ "${RUN_MIGRATIONS:-true}" == "true" ]]; then
   echo "Running migrations"
