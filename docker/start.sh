@@ -21,4 +21,9 @@ if [[ "${RUN_MIGRATIONS:-true}" == "true" ]]; then
   php artisan migrate --force
 fi
 
+if [[ "${SEED:-false}" == "true" || "${RUN_SEEDERS:-false}" == "true" ]]; then
+  echo "Running seeders"
+  php artisan db:seed --force
+fi
+
 exec /usr/bin/supervisord -n

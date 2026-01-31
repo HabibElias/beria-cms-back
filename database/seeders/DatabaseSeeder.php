@@ -31,6 +31,14 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin'
         ]);
 
+        User::factory()->create([
+            'name' => 'John Doe',
+            'email' => 'adimin@church.com',
+            'password' => 'password',
+            'phone' => '+(251) 9 00 00 00 00',
+            'role' => 'admin'
+        ]);
+
         $this->call(
             [
                 CategorySeeder::class,
