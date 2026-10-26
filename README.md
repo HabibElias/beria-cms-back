@@ -2,6 +2,8 @@
 
 Laravel API for the Beria CMS project. This repository contains the backend application, migrations, seeders, and API endpoints used by the frontend.
 
+For durable SQLite on free Render, use **remote Turso**, not a local SQLite file. See [Render + SQLite/Turso setup](docs/render-database.md). Turso support requires the code changes in this working copy to be pushed and deployed once; it cannot be enabled in the old deployment with environment variables alone.
+
 ### Features
 
 - REST API for books, categories, checkouts, and returns
@@ -11,9 +13,9 @@ Laravel API for the Beria CMS project. This repository contains the backend appl
 
 ### Requirements
 
-- PHP 8.2+
+- PHP 8.3+ with FFI enabled (provided by the Dockerfile)
 - Composer
-- PostgreSQL 13+
+- PostgreSQL 13+, SQLite for development, or a remote Turso database
 
 ### Quick Start
 

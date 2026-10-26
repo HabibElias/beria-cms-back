@@ -4,6 +4,9 @@ namespace App\Providers;
 
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\DatabaseManager;
+use Libsql\Laravel\Database\LibsqlConnection;
+use Libsql\Laravel\Database\LibsqlConnector;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -12,7 +15,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register only libsql; the upstream provider replaces the factory for
+        // every driver, including ordinary SQLite and PostgreSQL connections.
+        $this->app->resolving('db', function (DatabaseManager $db): void {
+            $db->extend('libsql', function (array $config, string $name) {
+                if (($config['database'] ?? null) !== ':memory:' && (empty($config['url']) || empty($config['password']))) {
+                    throw new \InvalidArgumentException('TURSO_DATABASE_URL and TURSO_AUTH_TOKEN are required for remote libsql.');
+                }
+                $config['name'] = $name;
+                $database = (new LibsqlConnector())->connect($config);
+
+                return new LibsqlConnection($database, $config['database'] ?? ':memory:', $config['prefix'] ?? '', $config);
+            });
+        });
     }
 
     /**
@@ -20,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(UrlGenerator $url): void
     {
-        if (env('APP_ENV') === 'production') {
+        if ($this->app->environment('production')) {
             $url->forceScheme('https');
         }
     }

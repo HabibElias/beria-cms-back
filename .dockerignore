@@ -4,6 +4,9 @@
 .env.*
 node_modules
 vendor
+database/*.sqlite*
+bootstrap/cache/*.php
+public/build
 storage/logs
 storage/framework/cache
 storage/framework/sessions

@@ -8,8 +8,18 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ReportController;
 use App\Models\Book;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 
 // Public Auth Routes
+Route::get('health', function () {
+    try {
+        DB::select('select 1');
+        return response()->json(['status' => 'ok']);
+    } catch (\Throwable) {
+        return response()->json(['status' => 'unavailable'], 503);
+    }
+});
+
 Route::post('login', [SessionController::class, 'store'])->name('login');
 Route::post('register', [SessionController::class, 'register']);
 Route::post('refresh', [SessionController::class, 'update']);

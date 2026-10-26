@@ -31,6 +31,15 @@ return [
 
     'connections' => [
 
+        'libsql' => [
+            'driver' => 'libsql',
+            // Remote-only: Render's ephemeral filesystem is never the source of truth.
+            'url' => env('TURSO_DATABASE_URL'),
+            'password' => env('TURSO_AUTH_TOKEN'),
+            'database' => null,
+            'prefix' => '',
+        ],
+
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DB_URL'),
