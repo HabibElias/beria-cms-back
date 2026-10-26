@@ -22,7 +22,7 @@ class AdminSeederTest extends TestCase
             'database.connections.libsql.turso_url' => null,
             'database.connections.libsql.password' => null,
             'bootstrap_admin.email' => 'administrator@example.com',
-            'bootstrap_admin.password' => 'Seeder-test-password-2026!',
+            'bootstrap_admin.password' => 'password1234',
             'bootstrap_admin.name' => 'Administrator',
             'bootstrap_admin.phone' => '0900000000',
         ]);
@@ -63,7 +63,7 @@ class AdminSeederTest extends TestCase
         $this->assertSame($original, User::sole()->getAttributes());
         $this->postJson('/api/login', [
             'email' => config('bootstrap_admin.email'),
-            'password' => 'Seeder-test-password-2026!',
+            'password' => 'password1234',
         ])->assertOk()->assertJson(['status' => true]);
     }
 
@@ -90,7 +90,7 @@ class AdminSeederTest extends TestCase
         $valid = config('bootstrap_admin');
         foreach ([
             [['password' => null], 'ADMIN_PASSWORD', 'required'],
-            [['password' => 'weak-password'], 'ADMIN_PASSWORD', 'at least 16'],
+            [['password' => 'password123'], 'ADMIN_PASSWORD', 'at least 12'],
             [['password' => str_repeat('long-secret', 8)], 'ADMIN_PASSWORD', '72'],
             [['email' => null], 'ADMIN_EMAIL', 'required'],
             [['email' => 'invalid-email'], 'ADMIN_EMAIL', 'valid email'],
@@ -106,7 +106,7 @@ class AdminSeederTest extends TestCase
             } catch (RuntimeException $exception) {
                 $this->assertStringContainsString($variable, $exception->getMessage());
                 $this->assertStringContainsString($requirement, $exception->getMessage());
-                $this->assertStringNotContainsString('weak-password', $exception->getMessage());
+                $this->assertStringNotContainsString('password123', $exception->getMessage());
                 $this->assertStringNotContainsString('long-secret', $exception->getMessage());
                 $this->assertStringNotContainsString('invalid-email', $exception->getMessage());
                 $this->assertStringNotContainsString($valid['password'], $exception->getMessage());

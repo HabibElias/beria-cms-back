@@ -52,7 +52,7 @@ For a fresh database, set these in **Render → your web service → Environment
 RUN_MIGRATIONS=true
 SEED_ADMIN=true
 ADMIN_EMAIL=your-email@example.com
-ADMIN_PASSWORD=YOUR_UNIQUE_PASSWORD_16_TO_72_CHARACTERS
+ADMIN_PASSWORD=YOUR_UNIQUE_PASSWORD_12_TO_72_CHARACTERS
 ADMIN_PHONE=your-phone-number
 ```
 
@@ -64,7 +64,7 @@ After signing in, set `SEED_ADMIN=false` and remove `ADMIN_PASSWORD` from Render
 
 With a trusted Laravel console, the same seeder can be run with `php artisan db:seed --class=AdminSeeder --force` after setting these credentials and migrating. This is not a password-reset mechanism. Do not run the repository's default `DatabaseSeeder` in production; it contains public development credentials and sample data.
 
-If startup stops in `AdminSeeder` after `Nothing to migrate`, the failure is in the administrator settings. Check the variable named in the validation error: `ADMIN_EMAIL` must be a valid email, `ADMIN_PASSWORD` must contain 16–72 characters, and `ADMIN_PHONE` must contain 3–255 characters. Render's environment values should contain your actual details without the example's `<...>` markers. Logs report variable names and requirements without including the configured values; do not share your password or Turso token to troubleshoot this.
+If startup stops in `AdminSeeder` after `Nothing to migrate`, the failure is in the administrator settings. Check the variable named in the validation error: `ADMIN_EMAIL` must be a valid email, `ADMIN_PASSWORD` must contain 12–72 characters, and `ADMIN_PHONE` must contain 3–255 characters. Render's environment values should contain your actual details without the example's `<...>` markers. Logs report variable names and requirements without including the configured values; do not share your password or Turso token to troubleshoot this.
 
 ## Local-file SQLite (temporary testing or a paid disk)
 

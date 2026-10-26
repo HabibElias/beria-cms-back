@@ -14,7 +14,7 @@ class AdminSeeder extends Seeder
         $attributes = config('bootstrap_admin');
         $validator = Validator::make($attributes, [
             'email' => ['required', 'string', 'email', 'max:255'],
-            'password' => ['required', 'string', 'min:16', 'max:72'],
+            'password' => ['required', 'string', 'min:12', 'max:72'],
             'name' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string', 'min:3', 'max:255'],
         ], [], [

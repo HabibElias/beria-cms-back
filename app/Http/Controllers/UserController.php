@@ -58,7 +58,7 @@ class UserController extends Controller
         
         $validated = $request->validate([
             'current_password' => 'required',
-            'new_password' => 'required|min:6|confirmed',
+            'new_password' => 'required|string|min:12|max:72|confirmed',
         ]);
 
         if (!Hash::check($validated['current_password'], (string) $user->password)) {

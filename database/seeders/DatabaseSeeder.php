@@ -33,8 +33,8 @@ class DatabaseSeeder extends Seeder
 
         User::factory()->create([
             'name' => 'John Doe',
-            'email' => 'adimin@church.com',
-            'password' => 'password',
+            'email' => 'admin@church.com',
+            'password' => 'password1234',
             'phone' => '+(251) 9 00 00 00 00',
             'role' => 'admin'
         ]);
