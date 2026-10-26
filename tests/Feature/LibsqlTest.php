@@ -6,16 +6,61 @@ use App\Models\Category;
 use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Libsql\Laravel\Database\LibsqlConnector;
 use Tests\TestCase;
 
 class LibsqlTest extends TestCase
 {
+    public function test_remote_url_and_token_reach_the_connector_after_laravel_parses_configuration(): void
+    {
+        $endpoint = 'libsql://regression-test.turso.io';
+        $token = 'non-secret-regression-test-token';
+        $previous = [];
+        foreach (['TURSO_DATABASE_URL' => $endpoint, 'TURSO_AUTH_TOKEN' => $token] as $key => $value) {
+            $previous[$key] = [$_ENV[$key] ?? null, $_SERVER[$key] ?? null];
+            $_ENV[$key] = $_SERVER[$key] = $value;
+        }
+
+        try {
+            // Read the real environment mapping, as config:cache does at startup.
+            $configuration = require config_path('database.php');
+        } finally {
+            foreach ($previous as $key => [$env, $server]) {
+                if ($env === null) {
+                    unset($_ENV[$key]);
+                } else {
+                    $_ENV[$key] = $env;
+                }
+                if ($server === null) {
+                    unset($_SERVER[$key]);
+                } else {
+                    $_SERVER[$key] = $server;
+                }
+            }
+        }
+
+        config(['database.default' => 'libsql', 'database.connections.libsql' => $configuration['connections']['libsql']]);
+        $this->mock(LibsqlConnector::class, function ($mock) use ($endpoint, $token) {
+            $mock->shouldReceive('connect')->once()->andReturnUsing(function (array $config) use ($endpoint, $token) {
+                $this->assertTrue(($config['url'] ?? null) === $endpoint, 'The configured remote endpoint was lost.');
+                $this->assertTrue(($config['password'] ?? null) === $token, 'The configured auth token was lost.');
+
+                // Replace only the remote transport; still exercise the native SDK query.
+                return (new LibsqlConnector())->connect(array_replace($config, [
+                    'url' => null, 'password' => null, 'database' => ':memory:',
+                ]));
+            });
+        });
+
+        $this->getJson('/api/health')->assertOk()->assertJson(['status' => 'ok']);
+    }
+
     public function test_libsql_supports_migrations_transactions_and_authenticated_api_requests(): void
     {
         config([
             'database.default' => 'libsql',
             'database.connections.libsql.database' => ':memory:',
-            'database.connections.libsql.url' => null,
+            'database.connections.libsql.turso_url' => null,
             'database.connections.libsql.password' => null,
             'cache.default' => 'database',
         ]);
@@ -52,7 +97,7 @@ class LibsqlTest extends TestCase
         config([
             'database.default' => 'libsql',
             'database.connections.libsql.database' => null,
-            'database.connections.libsql.url' => null,
+            'database.connections.libsql.turso_url' => null,
             'database.connections.libsql.password' => null,
         ]);
         $this->getJson('/api/health')->assertStatus(503)->assertJson(['status' => 'unavailable']);

@@ -12,7 +12,7 @@ The application supports three database options:
 
 The old `beria-cms-back` deployment did not include the Turso driver or its PHP FFI runtime. The prepared changes add them to **this repository**, so Render can stay connected to `HabibElias/beria-cms-back` with its current root directory. They also retain PostgreSQL support for a staged migration or rollback.
 
-Verified locally: four tests (16 assertions), a full production Docker build, HTTP database health, SQLite/cache writes as the `www-data` worker, and all seven migrations through libsql/FFI inside the PHP 8.3 image. A real remote Turso connection has not been tested without your database URL/token. The code has not been pushed or deployed to Render.
+Local verification covers the environment-to-driver URL/token mapping, migrations, authenticated requests, transactions and database caching. Production-image checks cover HTTP health, SQLite/cache writes as the `www-data` worker, and all seven migrations through libsql/FFI on PHP 8.3. A real remote Turso connection still requires valid database credentials.
 
 Push/review the prepared changes and deploy that commit once. Do not point the old image at Turso by setting `DB_CONNECTION=libsql` before the code is deployed: it has no such connection. The Dockerfile uses Debian PHP 8.3 with FFI, PostgreSQL and SQLite support, and respects Render's `PORT` variable.
 

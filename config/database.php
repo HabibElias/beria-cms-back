@@ -34,7 +34,8 @@ return [
         'libsql' => [
             'driver' => 'libsql',
             // Remote-only: Render's ephemeral filesystem is never the source of truth.
-            'url' => env('TURSO_DATABASE_URL'),
+            // Laravel consumes "url" as a database DSN before driver resolution.
+            'turso_url' => env('TURSO_DATABASE_URL'),
             'password' => env('TURSO_AUTH_TOKEN'),
             'database' => null,
             'prefix' => '',

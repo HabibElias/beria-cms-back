@@ -19,11 +19,12 @@ class AppServiceProvider extends ServiceProvider
         // every driver, including ordinary SQLite and PostgreSQL connections.
         $this->app->resolving('db', function (DatabaseManager $db): void {
             $db->extend('libsql', function (array $config, string $name) {
+                $config['url'] = $config['turso_url'] ?? null;
                 if (($config['database'] ?? null) !== ':memory:' && (empty($config['url']) || empty($config['password']))) {
                     throw new \InvalidArgumentException('TURSO_DATABASE_URL and TURSO_AUTH_TOKEN are required for remote libsql.');
                 }
                 $config['name'] = $name;
-                $database = (new LibsqlConnector())->connect($config);
+                $database = $this->app->make(LibsqlConnector::class)->connect($config);
 
                 return new LibsqlConnection($database, $config['database'] ?? ':memory:', $config['prefix'] ?? '', $config);
             });
