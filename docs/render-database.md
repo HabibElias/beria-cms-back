@@ -36,7 +36,7 @@ Enter the actual token securely in Render; never commit it or put it in a fronte
 
 Keep existing `APP_KEY`, `JWT_SECRET` and `APP_URL` values. Preserve `FRONT_END_URL` / allowed origins for the frontend. Existing PostgreSQL `DB_HOST`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` and `DB_URL` values are not used by the libsql connection; remove obsolete entries when cutover is complete.
 
-`RUN_MIGRATIONS=true` runs Laravel migrations to create missing tables. Startup never resets the database or runs demo seeders. `/api/health` returns `{"status":"ok"}` when a database query succeeds, and 503 when Turso configuration/connection is unavailable. Check login, books, categories, and checkouts separately after migration.
+`RUN_MIGRATIONS=true` runs Laravel migrations to create missing tables. Startup never resets the database or runs demo seeders. The optional `SEED_ADMIN=true` creates only the administrator described below. `/api/health` returns `{"status":"ok"}` when a database query succeeds, and 503 when Turso configuration/connection is unavailable. Check login, books, categories, and checkouts separately after migration.
 
 The official Turso Laravel adapter is in technical preview. The application locks the stable PHP SDK `0.2.5` and enables only the libsql connection, preserving ordinary PostgreSQL and SQLite connections. Local integration tests exercise the actual FFI adapter with an in-memory database; remote connectivity still needs real Turso credentials.
 
@@ -44,7 +44,25 @@ The official Turso Laravel adapter is in technical preview. The application lock
 
 Changing environment variables **does not copy existing users, books, or checkout records**. A new Turso database starts empty. Back up the existing PostgreSQL database and migrate its rows with IDs, password hashes and relationships preserved before changing the live service. A PostgreSQL SQL dump is not directly compatible with SQLite. Keep the old database for rollback. No live-data migration is included or has been performed.
 
-For a completely new database, create an administrator using a trusted Laravel console connected to Turso after migrations. Do not run the repository's demo seeder in production; it contains public development credentials.
+## Create your first administrator with Render environment variables
+
+For a fresh database, set these in **Render → your web service → Environment** and save/redeploy:
+
+```dotenv
+RUN_MIGRATIONS=true
+SEED_ADMIN=true
+ADMIN_EMAIL=your-email@example.com
+ADMIN_PASSWORD=YOUR_UNIQUE_PASSWORD_16_TO_72_CHARACTERS
+ADMIN_PHONE=your-phone-number
+```
+
+Replace the placeholders with your own email, password and phone number. Keep the password in Render, never in Git or frontend variables. Optional `ADMIN_NAME` defaults to `Administrator`. A phone number is required by the users schema; requiring a non-empty value also avoids an empty-string binding bug in the preview Turso driver.
+
+After migrations, startup runs only `AdminSeeder`. The password is hashed by the User model. It creates one administrator without sample users, books or categories. Logs say `Administrator created` after success. Sign in at <https://beriabooks.vercel.app> using exactly the email and password you set.
+
+After signing in, set `SEED_ADMIN=false` and remove `ADMIN_PASSWORD` from Render. Redeploying with seeding enabled does not reset an existing administrator's password or profile. If the email belongs to a non-admin, seeding fails without changing that account; choose an unused email instead.
+
+With a trusted Laravel console, the same seeder can be run with `php artisan db:seed --class=AdminSeeder --force` after setting these credentials and migrating. This is not a password-reset mechanism. Do not run the repository's default `DatabaseSeeder` in production; it contains public development credentials and sample data.
 
 ## Local-file SQLite (temporary testing or a paid disk)
 

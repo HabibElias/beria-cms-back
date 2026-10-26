@@ -31,5 +31,8 @@ php artisan config:cache
 if [ "${RUN_MIGRATIONS:-false}" = true ]; then
     php artisan migrate --force --no-interaction
 fi
-# No seeders or key generation at startup: deployments must preserve live data.
+if [ "${SEED_ADMIN:-false}" = true ]; then
+    php artisan db:seed --class=AdminSeeder --force --no-interaction
+fi
+# Demo seeders and key generation are never run during startup.
 exec apache2-foreground
