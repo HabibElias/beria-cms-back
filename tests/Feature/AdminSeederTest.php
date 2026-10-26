@@ -89,23 +89,48 @@ class AdminSeederTest extends TestCase
     {
         $valid = config('bootstrap_admin');
         foreach ([
-            ['password' => null],
-            ['password' => 'weak-password'],
-            ['email' => null],
-            ['email' => 'invalid-email'],
-            ['phone' => null],
-            ['phone' => ''],
-            ['phone' => '0'],
-        ] as $invalid) {
+            [['password' => null], 'ADMIN_PASSWORD', 'required'],
+            [['password' => 'weak-password'], 'ADMIN_PASSWORD', 'at least 16'],
+            [['password' => str_repeat('long-secret', 8)], 'ADMIN_PASSWORD', '72'],
+            [['email' => null], 'ADMIN_EMAIL', 'required'],
+            [['email' => 'invalid-email'], 'ADMIN_EMAIL', 'valid email'],
+            [['phone' => null], 'ADMIN_PHONE', 'required'],
+            [['phone' => ''], 'ADMIN_PHONE', 'required'],
+            [['phone' => '0'], 'ADMIN_PHONE', 'at least 3'],
+            [['name' => null], 'ADMIN_NAME', 'required'],
+        ] as [$invalid, $variable, $requirement]) {
             config(['bootstrap_admin' => array_replace($valid, $invalid)]);
             try {
                 $this->seed(AdminSeeder::class);
-                $this->fail('Seeding must reject a missing or weak password.');
+                $this->fail('Seeding must reject invalid admin configuration.');
             } catch (RuntimeException $exception) {
-                $this->assertStringContainsString('16–72 characters', $exception->getMessage());
+                $this->assertStringContainsString($variable, $exception->getMessage());
+                $this->assertStringContainsString($requirement, $exception->getMessage());
                 $this->assertStringNotContainsString('weak-password', $exception->getMessage());
+                $this->assertStringNotContainsString('long-secret', $exception->getMessage());
+                $this->assertStringNotContainsString('invalid-email', $exception->getMessage());
+                $this->assertStringNotContainsString($valid['password'], $exception->getMessage());
             }
             $this->assertDatabaseCount('users', 0);
+        }
+    }
+
+    public function test_an_empty_optional_admin_name_uses_the_default(): void
+    {
+        $previous = [$_ENV['ADMIN_NAME'] ?? null, $_SERVER['ADMIN_NAME'] ?? null];
+        $_ENV['ADMIN_NAME'] = $_SERVER['ADMIN_NAME'] = '';
+
+        try {
+            $configuration = require config_path('bootstrap_admin.php');
+            $this->assertSame('Administrator', $configuration['name']);
+        } finally {
+            foreach (['_ENV', '_SERVER'] as $index => $global) {
+                if ($previous[$index] === null) {
+                    unset($GLOBALS[$global]['ADMIN_NAME']);
+                } else {
+                    $GLOBALS[$global]['ADMIN_NAME'] = $previous[$index];
+                }
+            }
         }
     }
 }

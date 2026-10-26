@@ -3,6 +3,6 @@
 return [
     'email' => env('ADMIN_EMAIL'),
     'password' => env('ADMIN_PASSWORD'),
-    'name' => env('ADMIN_NAME', 'Administrator'),
+    'name' => env('ADMIN_NAME') ?: 'Administrator',
     'phone' => env('ADMIN_PHONE'),
 ];

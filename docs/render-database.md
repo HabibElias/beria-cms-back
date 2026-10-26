@@ -56,13 +56,15 @@ ADMIN_PASSWORD=YOUR_UNIQUE_PASSWORD_16_TO_72_CHARACTERS
 ADMIN_PHONE=your-phone-number
 ```
 
-Replace the placeholders with your own email, password and phone number. Keep the password in Render, never in Git or frontend variables. Optional `ADMIN_NAME` defaults to `Administrator`. A phone number is required by the users schema; requiring a non-empty value also avoids an empty-string binding bug in the preview Turso driver.
+Replace the placeholders with your own email, password and phone number. Keep the password in Render, never in Git or frontend variables. Optional `ADMIN_NAME` defaults to `Administrator` when missing or empty. A phone number is required by the users schema; requiring a non-empty value also avoids an empty-string binding bug in the preview Turso driver.
 
 After migrations, startup runs only `AdminSeeder`. The password is hashed by the User model. It creates one administrator without sample users, books or categories. Logs say `Administrator created` after success. Sign in at <https://beriabooks.vercel.app> using exactly the email and password you set.
 
 After signing in, set `SEED_ADMIN=false` and remove `ADMIN_PASSWORD` from Render. Redeploying with seeding enabled does not reset an existing administrator's password or profile. If the email belongs to a non-admin, seeding fails without changing that account; choose an unused email instead.
 
 With a trusted Laravel console, the same seeder can be run with `php artisan db:seed --class=AdminSeeder --force` after setting these credentials and migrating. This is not a password-reset mechanism. Do not run the repository's default `DatabaseSeeder` in production; it contains public development credentials and sample data.
+
+If startup stops in `AdminSeeder` after `Nothing to migrate`, the failure is in the administrator settings. Check the variable named in the validation error: `ADMIN_EMAIL` must be a valid email, `ADMIN_PASSWORD` must contain 16–72 characters, and `ADMIN_PHONE` must contain 3–255 characters. Render's environment values should contain your actual details without the example's `<...>` markers. Logs report variable names and requirements without including the configured values; do not share your password or Turso token to troubleshoot this.
 
 ## Local-file SQLite (temporary testing or a paid disk)
 

@@ -17,11 +17,16 @@ class AdminSeeder extends Seeder
             'password' => ['required', 'string', 'min:16', 'max:72'],
             'name' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string', 'min:3', 'max:255'],
+        ], [], [
+            'email' => 'ADMIN_EMAIL',
+            'password' => 'ADMIN_PASSWORD',
+            'name' => 'ADMIN_NAME',
+            'phone' => 'ADMIN_PHONE',
         ]);
 
         if ($validator->fails()) {
             // Never include environment values (especially passwords) in logs.
-            throw new RuntimeException('Admin seeding requires a valid ADMIN_EMAIL, an ADMIN_PASSWORD of 16–72 characters, a non-empty ADMIN_PHONE, and a valid ADMIN_NAME.');
+            throw new RuntimeException('Admin seeding configuration is invalid. '.implode(' ', $validator->errors()->all()));
         }
 
         // The unique email index also protects concurrent deployments. Existing
