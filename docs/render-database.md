@@ -36,7 +36,7 @@ Enter the actual token securely in Render; never commit it or put it in a fronte
 
 Keep existing `APP_KEY`, `JWT_SECRET` and `APP_URL` values. Preserve `FRONT_END_URL` / allowed origins for the frontend. Existing PostgreSQL `DB_HOST`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` and `DB_URL` values are not used by the libsql connection; remove obsolete entries when cutover is complete.
 
-`RUN_MIGRATIONS=true` runs Laravel migrations to create missing tables. Startup never resets the database or runs demo seeders. The optional `SEED_ADMIN=true` creates only the administrator described below. `/api/health` returns `{"status":"ok"}` when a database query succeeds, and 503 when Turso configuration/connection is unavailable. Check login, books, categories, and checkouts separately after migration.
+`RUN_MIGRATIONS=true` runs Laravel migrations to create missing tables. Startup never resets the database or runs the full development seeder. The optional `SEED_ADMIN=true` creates only the administrator described below; `SEED_BOOKS=true` imports the real-book starter catalogue. `/api/health` returns `{"status":"ok"}` when a database query succeeds, and 503 when Turso configuration/connection is unavailable. Check login, books, categories, and checkouts separately after migration.
 
 The official Turso Laravel adapter is in technical preview. The application locks the stable PHP SDK `0.2.5` and enables only the libsql connection, preserving ordinary PostgreSQL and SQLite connections. Local integration tests exercise the actual FFI adapter with an in-memory database; remote connectivity still needs real Turso credentials.
 
@@ -58,13 +58,36 @@ ADMIN_PHONE=your-phone-number
 
 Replace the placeholders with your own email, password and phone number. Keep the password in Render, never in Git or frontend variables. Optional `ADMIN_NAME` defaults to `Administrator` when missing or empty. A phone number is required by the users schema; requiring a non-empty value also avoids an empty-string binding bug in the preview Turso driver.
 
-After migrations, startup runs only `AdminSeeder`. The password is hashed by the User model. It creates one administrator without sample users, books or categories. Logs say `Administrator created` after success. Sign in at <https://beriabooks.vercel.app> using exactly the email and password you set.
+With only `SEED_ADMIN` enabled, startup runs `AdminSeeder` after migrations. The password is hashed by the User model. It creates one administrator without sample users, books or categories. Logs say `Administrator created` after success. Sign in at <https://beriabooks.vercel.app> using exactly the email and password you set.
 
 After signing in, set `SEED_ADMIN=false` and remove `ADMIN_PASSWORD` from Render. Redeploying with seeding enabled does not reset an existing administrator's password or profile. If the email belongs to a non-admin, seeding fails without changing that account; choose an unused email instead.
 
 With a trusted Laravel console, the same seeder can be run with `php artisan db:seed --class=AdminSeeder --force` after setting these credentials and migrating. This is not a password-reset mechanism. Do not run the repository's default `DatabaseSeeder` in production; it contains public development credentials and sample data.
 
 If startup stops in `AdminSeeder` after `Nothing to migrate`, the failure is in the administrator settings. Check the variable named in the validation error: `ADMIN_EMAIL` must be a valid email, `ADMIN_PASSWORD` must contain 12–72 characters, and `ADMIN_PHONE` must contain 3–255 characters. Render's environment values should contain your actual details without the example's `<...>` markers. Logs report variable names and requirements without including the configured values; do not share your password or Turso token to troubleshoot this.
+
+## Import the real-book starter catalogue
+
+With the new code deployed, set these on the **beria-cms-back** Render service and save/redeploy:
+
+```dotenv
+RUN_MIGRATIONS=true
+SEED_BOOKS=true
+```
+
+Startup runs only `BookSeeder` for this flag. It adds **16 real Christian books and five matching categories**, without creating users, changing passwords, or adding fake checkouts or returns. The catalogue includes Knowing God, The Cross of Christ, Basic Christianity, The Cost of Discipleship, and other sourced titles. Each entry includes edition metadata, a cover link, and its ISBN/source in the notes. See the [catalogue attribution and inventory defaults](../database/data/README.md).
+
+On an empty library, Render logs show `Library catalogue seeded: 16 books added; 0 existing books preserved.` The exact added count may be lower when matching books already exist. Repeated imports skip matching title/author pairs and preserve their edits and loan state. The import is transactional and never truncates tables. Old placeholder books remain for manual review.
+
+After the successful import, set `SEED_BOOKS=false` so future restarts do not re-add a starter title you intentionally removed. Confirm physical copies, shelf locations and condition before lending: these inventory fields start with documented defaults. The metadata snapshot is committed, so deployment does not depend on external book services; external cover availability may vary.
+
+From a trusted Render shell, the equivalent command is:
+
+```bash
+php artisan db:seed --class=BookSeeder --force
+```
+
+Do not use `migrate:fresh --seed` or the default `DatabaseSeeder` on production to import these books.
 
 ## Local-file SQLite (temporary testing or a paid disk)
 

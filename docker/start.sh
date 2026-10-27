@@ -34,5 +34,8 @@ fi
 if [ "${SEED_ADMIN:-false}" = true ]; then
     php artisan db:seed --class=AdminSeeder --force --no-interaction
 fi
-# Demo seeders and key generation are never run during startup.
+if [ "${SEED_BOOKS:-false}" = true ]; then
+    php artisan db:seed --class=BookSeeder --force --no-interaction
+fi
+# The full development seeder and key generation never run during startup.
 exec apache2-foreground

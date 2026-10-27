@@ -1,0 +1,212 @@
+{
+  "version": 1,
+  "metadata_source": {
+    "title": "Best Books Ever Dataset, Version 1.0.0",
+    "authors": [
+      "Lorena Casanova Lozano",
+      "Sergio Costa Planells"
+    ],
+    "year": 2020,
+    "url": "https://doi.org/10.5281/zenodo.4265096",
+    "repository": "https://github.com/scostap/goodreads_bbe_dataset",
+    "revision": "661ebeca29903c16b5d2f6b1c2a290e6a7fb9dc8",
+    "file": "Best_Books_Ever_dataset/books_1.Best_Books_Ever.csv",
+    "license": "CC BY-NC 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+    "changes": "Selected 16 Christian titles; normalized primary author names; wrote original short descriptions; retained the recorded edition ISBN, publisher, publication year, page count, and cover URL."
+  },
+  "books": [
+    {
+      "title": "Basic Christianity",
+      "author": "John Stott",
+      "description": "An accessible introduction to the identity of Jesus, the Christian account of human need, and the response of faith.",
+      "category": "Apologetics",
+      "isbn": "9780830834037",
+      "publisher": "IVP Books",
+      "published_year": 2006,
+      "pages": 179,
+      "book_img": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1386925697l/249024.jpg",
+      "source_url": "https://www.goodreads.com/book/show/249024.Basic_Christianity"
+    },
+    {
+      "title": "Celebration of Discipline: The Path to Spiritual Growth",
+      "author": "Richard J. Foster",
+      "description": "An introduction to Christian spiritual practices, including prayer, fasting, study, simplicity, and service.",
+      "category": "Spiritual formation",
+      "isbn": "9780060628390",
+      "publisher": "HarperOne",
+      "published_year": 1988,
+      "pages": 256,
+      "book_img": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1440657038l/64023._SX318_.jpg",
+      "source_url": "https://www.goodreads.com/book/show/64023.Celebration_of_Discipline"
+    },
+    {
+      "title": "Confessions",
+      "author": "Augustine of Hippo",
+      "description": "Augustine reflects on his early life, conversion to Christianity, memory, time, and the search for God.",
+      "category": "Christian classics",
+      "isbn": "9780192833723",
+      "publisher": "Oxford University Press",
+      "published_year": 1998,
+      "pages": 341,
+      "book_img": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1266454051l/27037.jpg",
+      "source_url": "https://www.goodreads.com/book/show/27037.Confessions"
+    },
+    {
+      "title": "Desiring God: Meditations of a Christian Hedonist",
+      "author": "John Piper",
+      "description": "An account of Christian joy and the pursuit of satisfaction in God through worship and daily discipleship.",
+      "category": "Christian living",
+      "isbn": "9781590521199",
+      "publisher": "Multnomah Books",
+      "published_year": 2003,
+      "pages": 369,
+      "book_img": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1386924844l/213367.jpg",
+      "source_url": "https://www.goodreads.com/book/show/213367.Desiring_God"
+    },
+    {
+      "title": "Knowing God",
+      "author": "J. I. Packer",
+      "description": "An introduction to the character and attributes of God and what it means to know God personally.",
+      "category": "Theology",
+      "isbn": "9780830816507",
+      "publisher": "InterVarsity Press",
+      "published_year": 1993,
+      "pages": 286,
+      "book_img": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1348545196l/139855.jpg",
+      "source_url": "https://www.goodreads.com/book/show/139855.Knowing_God"
+    },
+    {
+      "title": "Life Together: The Classic Exploration of Christian Community",
+      "author": "Dietrich Bonhoeffer",
+      "description": "Reflections on Christian community, shared worship, prayer, service, confession, and fellowship.",
+      "category": "Christian living",
+      "isbn": "9780060608521",
+      "publisher": "HarperOne",
+      "published_year": 1978,
+      "pages": 122,
+      "book_img": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1525219497l/174845._SY475_.jpg",
+      "source_url": "https://www.goodreads.com/book/show/174845.Life_Together"
+    },
+    {
+      "title": "Orthodoxy",
+      "author": "G. K. Chesterton",
+      "description": "A personal account of the reasoning and paradoxes that led Chesterton toward Christian belief.",
+      "category": "Apologetics",
+      "isbn": "9781600965272",
+      "publisher": "Waking Lion Press",
+      "published_year": 2008,
+      "pages": 168,
+      "book_img": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1348323220l/87665.jpg",
+      "source_url": "https://www.goodreads.com/book/show/87665.Orthodoxy"
+    },
+    {
+      "title": "The Abolition of Man",
+      "author": "C. S. Lewis",
+      "description": "Three lectures on education, moral judgment, and the consequences of rejecting objective values.",
+      "category": "Apologetics",
+      "isbn": "9780060652944",
+      "publisher": "HarperOne",
+      "published_year": 2015,
+      "pages": 113,
+      "book_img": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1418843138l/79428.jpg",
+      "source_url": "https://www.goodreads.com/book/show/79428.The_Abolition_of_Man"
+    },
+    {
+      "title": "The Case for Christ",
+      "author": "Lee Strobel",
+      "description": "A journalist examines historical evidence concerning Jesus through interviews with Christian scholars.",
+      "category": "Apologetics",
+      "isbn": "9780310226055",
+      "publisher": "Zondervan",
+      "published_year": 1998,
+      "pages": 367,
+      "book_img": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1448776489l/73186._SY475_.jpg",
+      "source_url": "https://www.goodreads.com/book/show/73186.The_Case_for_Christ"
+    },
+    {
+      "title": "The Cost of Discipleship",
+      "author": "Dietrich Bonhoeffer",
+      "description": "An examination of costly grace and the practical demands of following Jesus, drawing on the Sermon on the Mount.",
+      "category": "Christian living",
+      "isbn": "9780684815008",
+      "publisher": "Touchstone",
+      "published_year": 1995,
+      "pages": 320,
+      "book_img": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1348281510l/174834.jpg",
+      "source_url": "https://www.goodreads.com/book/show/174834.The_Cost_of_Discipleship"
+    },
+    {
+      "title": "The Cross of Christ",
+      "author": "John Stott",
+      "description": "A study of the meaning of the crucifixion, atonement, and the place of the cross in Christian life.",
+      "category": "Theology",
+      "isbn": "9780830833207",
+      "publisher": "IVP Books",
+      "published_year": 2006,
+      "pages": 380,
+      "book_img": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1386925646l/73188.jpg",
+      "source_url": "https://www.goodreads.com/book/show/73188.The_Cross_of_Christ"
+    },
+    {
+      "title": "The Holiness of God",
+      "author": "R. C. Sproul",
+      "description": "A biblical exploration of divine holiness and its implications for worship, grace, and Christian living.",
+      "category": "Theology",
+      "isbn": "9780842339650",
+      "publisher": "Tyndale Momentum",
+      "published_year": 2020,
+      "pages": 240,
+      "book_img": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1513795517l/556629.jpg",
+      "source_url": "https://www.goodreads.com/book/show/556629.The_Holiness_of_God"
+    },
+    {
+      "title": "The Imitation of Christ",
+      "author": "Thomas à Kempis",
+      "description": "A devotional classic on humility, inward spiritual life, and the practice of following Christ.",
+      "category": "Christian classics",
+      "isbn": "9780375700187",
+      "publisher": "Vintage",
+      "published_year": 1998,
+      "pages": 288,
+      "book_img": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1320442968l/851393.jpg",
+      "source_url": "https://www.goodreads.com/book/show/851393.The_Imitation_of_Christ"
+    },
+    {
+      "title": "The Knowledge of the Holy",
+      "author": "A. W. Tozer",
+      "description": "Short theological reflections on the attributes of God and their significance for worship and daily life.",
+      "category": "Theology",
+      "isbn": "9780060684129",
+      "publisher": "HarperOne",
+      "published_year": 1978,
+      "pages": 117,
+      "book_img": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1411484750l/666758.jpg",
+      "source_url": "https://www.goodreads.com/book/show/666758.The_Knowledge_of_the_Holy"
+    },
+    {
+      "title": "The Purpose Driven Life: What on Earth Am I Here for?",
+      "author": "Rick Warren",
+      "description": "A guide to Christian purpose through worship, fellowship, discipleship, service, and mission.",
+      "category": "Christian living",
+      "isbn": "9780310276999",
+      "publisher": "Zondervan Publishing Company",
+      "published_year": 2007,
+      "pages": 334,
+      "book_img": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1440111652l/56495._SY475_.jpg",
+      "source_url": "https://www.goodreads.com/book/show/56495.The_Purpose_Driven_Life"
+    },
+    {
+      "title": "The Reason for God: Belief in an Age of Skepticism",
+      "author": "Timothy Keller",
+      "description": "An exploration of common objections to Christianity and arguments for Christian faith in a skeptical age.",
+      "category": "Apologetics",
+      "isbn": "9780525950493",
+      "publisher": "Dutton",
+      "published_year": 2008,
+      "pages": 293,
+      "book_img": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1388185497l/1858013.jpg",
+      "source_url": "https://www.goodreads.com/book/show/1858013.The_Reason_for_God"
+    }
+  ]
+}

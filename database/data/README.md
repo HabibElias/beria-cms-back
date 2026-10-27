@@ -1,0 +1,11 @@
+# Starter library catalogue
+
+`library-catalogue.json` contains 16 real Christian books with edition-specific ISBN-13 identifiers, publisher, publication year, page count, and cover links. `published_year` is the recorded edition's year, not the original work's first-publication year. ISBN and a per-book source link appear in the imported book's notes because the current books table has no ISBN column.
+
+The selected bibliographic records come from **Lorena Casanova Lozano and Sergio Costa Planells (2020), Best Books Ever Dataset, Version 1.0.0**, <https://doi.org/10.5281/zenodo.4265096>, distributed under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/). The pinned repository revision and exact source file are recorded in the JSON. Attribution and the source license apply to the adapted catalogue data, independently of the application code. Descriptions are newly written summaries; primary author names are normalized and translator/foreword credits are omitted from the author field. No publisher blurbs, ratings, prices, or full book texts are copied.
+
+The source is a secondary Goodreads metadata dataset, not a live publisher catalogue. Entries were checked for complete fields and valid ISBN checksums. The records deliberately exclude invalid ISBN placeholders, missing publication details, and unrelated books sharing the same title. Live publisher and cover-host verification was unavailable in this workspace. Cover images stay on their external source host; the seed stores URLs rather than uploading or redistributing image files.
+
+These are starter catalogue records, not proof that the church owns a particular copy. `UNASSIGNED` shelf location, `good` condition, and available status are initial application defaults. Confirm physical copies and update these fields before lending.
+
+Run only `BookSeeder` for a production import. It includes the five relevant categories, matches books by exact title and primary author, and preserves existing matching records without rewriting edits, availability, or loans. It does not delete old placeholder records. A manually renamed title/author or differently credited edition may require librarian reconciliation before another import. Disable `SEED_BOOKS` after the initial load. The seed runs from the committed snapshot without calling a metadata API during deployment.

@@ -10,6 +10,7 @@ For durable SQLite on free Render, use **remote Turso**, not a local SQLite file
 - JWT-based authentication
 - PostgreSQL database support
 - Database seeding for local/dev
+- Optional real-book starter catalogue on Render: set `SEED_BOOKS=true` for the initial import; see [instructions](docs/render-database.md#import-the-real-book-starter-catalogue) and [data sources](database/data/README.md).
 
 ### Requirements
 
