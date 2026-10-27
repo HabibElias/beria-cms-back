@@ -21,6 +21,8 @@ The existing management APIs now require the **admin** role. Regular members and
 
 Registration requires a confirmed password of 12–72 characters within the password hasher's byte limit. Role assignment is prohibited; the server always creates `role=user`. Passwords use the User model's hash cast. Sign-up and sign-in are rate limited. Admin-created accounts also require an explicit valid password, rather than receiving a shared default. Existing account passwords are not reset. Own-profile updates accept only name and email and cannot change the role.
 
+Email addresses are normalized on account creation and editing. Case-insensitive uniqueness checks include legacy mixed-case accounts so changing an email cannot shadow another reader or administrator at sign-in.
+
 ## Request lifecycle
 
 Submitting a request does not reserve a book or create a checkout. A reader cannot duplicate a pending request, request an unavailable copy, or submit a new request when current loans plus pending requests already total three. A nullable unique pending key backs the duplicate constraint.

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -40,10 +41,14 @@ class UserController extends Controller
     public function updateProfile(Request $request)
     {
         $user = $request->user();
+        $request->merge(['email' => mb_strtolower(trim((string) $request->input('email')))]);
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,'.$user->id,
         ]);
+        if (User::query()->where('id', '!=', $user->id)->whereRaw('LOWER(email) = ?', [$validated['email']])->exists()) {
+            throw ValidationException::withMessages(['email' => 'This email address already has an account.']);
+        }
         $user->update($validated);
 
         return response()->json(['status' => true, 'user' => $user]);

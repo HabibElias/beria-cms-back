@@ -257,4 +257,18 @@ class MemberLibraryTest extends TestCase
         $this->assertTrue((bool) $oldest->book->fresh()->is_available);
         $this->assertDatabaseCount('checkouts', 11);
     }
+
+    public function test_profile_email_case_changes_cannot_shadow_another_account(): void
+    {
+        $admin = $this->reader(['role' => 'admin', 'email' => 'Legacy.Admin@example.test']);
+        $reader = $this->reader(['email' => 'reader@example.test']);
+        $this->actingAs($reader)->postJson('/api/user/profile', ['name' => 'Reader', 'email' => 'LEGACY.ADMIN@EXAMPLE.TEST'])
+            ->assertUnprocessable()->assertJsonValidationErrors('email');
+        $this->assertSame('reader@example.test', $reader->fresh()->email);
+        $this->actingAs($admin)->patchJson('/api/members/'.$reader->id, [
+            'name' => 'Reader', 'email' => 'legacy.admin@example.test', 'phone' => '0911000000', 'role' => 'user',
+        ])->assertUnprocessable()->assertJsonValidationErrors('email');
+        $this->actingAs($reader)->postJson('/api/user/profile', ['name' => 'Reader', 'email' => 'READER@EXAMPLE.TEST'])
+            ->assertOk()->assertJsonPath('user.email', 'reader@example.test');
+    }
 }

@@ -97,6 +97,7 @@ class MemberController extends Controller
             ], 403);
         }
 
+        $request->merge(['email' => mb_strtolower(trim((string) $request->input('email')))]);
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => [
@@ -111,6 +112,9 @@ class MemberController extends Controller
             'email.unique' => 'This email address is already in use by another member.',
         ]);
 
+        if (User::query()->where('id', '!=', $member->id)->whereRaw('LOWER(email) = ?', [$validated['email']])->exists()) {
+            throw ValidationException::withMessages(['email' => 'This email address already has an account.']);
+        }
         $member->update($validated);
 
         return response()->json([
