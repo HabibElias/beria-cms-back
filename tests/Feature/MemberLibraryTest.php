@@ -238,4 +238,23 @@ class MemberLibraryTest extends TestCase
         $this->assertSame('pending', $request->fresh()->status);
         $this->assertDatabaseCount('checkouts', 0);
     }
+
+    public function test_admin_can_find_and_return_loans_on_later_api_pages(): void
+    {
+        $admin = $this->reader(['role' => 'admin']);
+        $oldest = null;
+        foreach (range(1, 12) as $index) {
+            $book = $this->book();
+            $reader = $this->reader();
+            $checkout = app(BorrowingService::class)->issue($book->id, $reader->id, now()->addWeeks(2)->toDateString());
+            $oldest ??= $checkout;
+        }
+        $this->actingAs($admin)->getJson('/api/members?perPage=5&page=3')->assertOk()
+            ->assertJsonPath('last_page', 3)->assertJsonCount(3, 'data');
+        $this->getJson('/api/checkouts?per_page=5&page=3')->assertOk()->assertJsonCount(2, 'data')
+            ->assertJsonPath('data.1.id', $oldest->id);
+        $this->deleteJson('/api/checkouts/'.$oldest->id)->assertOk();
+        $this->assertTrue((bool) $oldest->book->fresh()->is_available);
+        $this->assertDatabaseCount('checkouts', 11);
+    }
 }

@@ -11,7 +11,7 @@ class CheckoutController extends Controller
 {
     public function index(Request $request)
     {
-        return Checkout::with(['book', 'user'])->latest()->paginate(min(100, max(1, (int) $request->get('per_page', 10))));
+        return Checkout::with(['book', 'user'])->latest()->latest('id')->paginate(min(100, max(1, (int) $request->get('per_page', 10))));
     }
 
     public function store(Request $request, BorrowingService $borrowing)

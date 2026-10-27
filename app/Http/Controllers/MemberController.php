@@ -19,7 +19,7 @@ class MemberController extends Controller
         $perPage = $request->query('perPage', 10);
         $page = $request->query('page', 1);
 
-        return User::with('checkouts')->paginate($perPage, ['*'], 'page', $page);
+        return User::with('checkouts')->orderBy('id')->paginate(min(100, max(1, (int) $perPage)), ['*'], 'page', $page);
     }
 
     /**
