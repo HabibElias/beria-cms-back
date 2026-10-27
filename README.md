@@ -2,6 +2,8 @@
 
 Laravel API for the Beria CMS project. This repository contains the backend application, migrations, seeders, and API endpoints used by the frontend.
 
+Public browsing, member registration, personal loans and admin-reviewed loan requests are documented in [Member library integration](docs/member-library.md).
+
 For durable SQLite on free Render, use **remote Turso**, not a local SQLite file. See [Render + SQLite/Turso setup](docs/render-database.md). Turso support requires the code changes in this working copy to be pushed and deployed once; it cannot be enabled in the old deployment with environment variables alone.
 
 ### Features

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -43,9 +42,10 @@ class UserController extends Controller
         $user = $request->user();
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'email' => 'required|email|max:255|unique:users,email,'.$user->id,
         ]);
         $user->update($validated);
+
         return response()->json(['status' => true, 'user' => $user]);
     }
 
@@ -55,19 +55,23 @@ class UserController extends Controller
     public function updatePassword(Request $request)
     {
         $user = $request->user();
-        
+
         $validated = $request->validate([
             'current_password' => 'required',
-            'new_password' => 'required|string|min:12|max:72|confirmed',
+            'new_password' => ['required', 'string', 'min:12', 'max:72', 'confirmed', function ($attribute, $value, $fail) {
+                if (strlen($value) > 72) {
+                    $fail('Password is too long. Please use a shorter password.');
+                }
+            }],
         ]);
 
-        if (!Hash::check($validated['current_password'], (string) $user->password)) {
+        if (! Hash::check($validated['current_password'], (string) $user->password)) {
             return response()->json(['status' => false, 'message' => 'Current password is incorrect'], 422);
         }
 
         $user->password = $validated['new_password'];
         $user->save();
-        
+
         return response()->json(['status' => true, 'message' => 'Password updated successfully']);
     }
 

@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\MemberCreateRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class MemberController extends Controller
 {
@@ -27,13 +27,19 @@ class MemberController extends Controller
      */
     public function store(MemberCreateRequest $request)
     {
+        $request->merge(['email' => mb_strtolower(trim((string) $request->input('email')))]);
         try {
             $attr = $request->validate(
                 [
                     'name' => 'required|min:3',
                     'email' => 'required|email',
                     'phone' => 'required|min:10',
-                    'role' => 'required|in:admin,librarian,user'
+                    'role' => 'required|in:admin,librarian,user',
+                    'password' => ['required', 'string', 'min:12', 'max:72', 'confirmed', function ($attribute, $value, $fail) {
+                        if (strlen($value) > 72) {
+                            $fail('Password is too long. Please use a shorter password.');
+                        }
+                    }],
                 ]
             );
 
@@ -46,16 +52,12 @@ class MemberController extends Controller
         }
 
         // check if the user already exists
-        if (User::where('email', $attr['email'])->exists()) {
+        if (User::whereRaw('LOWER(email) = ?', [$attr['email']])->exists()) {
             return response()->json([
                 'status' => false,
                 'message' => 'User already exists with that email',
             ], 409);
         }
-
-
-        $attr = array_merge($attr, ['password' => password_hash('12341234', PASSWORD_BCRYPT)]);
-
 
         $member = User::create($attr);
 
@@ -63,7 +65,7 @@ class MemberController extends Controller
             [
                 'status' => true,
                 'message' => 'Member created',
-                'data' => $member
+                'data' => $member,
             ],
             201
         );
@@ -77,8 +79,9 @@ class MemberController extends Controller
         //
         if ($member) {
             return response()->json(['status' => true, 'data' => $member]);
-        } else
+        } else {
             return response()->json(['status' => false, 'message' => 'no user with this id'], 400);
+        }
     }
 
     /**
@@ -90,7 +93,7 @@ class MemberController extends Controller
         if ($request->user()->id === $member->id) {
             return response()->json([
                 'status' => false,
-                'message' => 'You cannot edit your own information here.'
+                'message' => 'You cannot edit your own information here.',
             ], 403);
         }
 
@@ -109,10 +112,11 @@ class MemberController extends Controller
         ]);
 
         $member->update($validated);
+
         return response()->json([
             'status' => true,
             'message' => 'Member updated',
-            'data' => $member
+            'data' => $member,
         ]);
     }
 
@@ -124,8 +128,10 @@ class MemberController extends Controller
         //
         if ($member) {
             $member->delete();
+
             return response()->json(['status' => true, 'message' => 'user deleted'], 200);
-        } else
+        } else {
             return response()->json(['status' => false, 'message' => 'no user with this id'], 400);
+        }
     }
 }

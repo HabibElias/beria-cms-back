@@ -1,27 +1,35 @@
 <?php
 
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\CatalogueController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\SessionController;
+use App\Http\Controllers\LoanRequestController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SessionController;
+use App\Http\Controllers\UserController;
 use App\Models\Book;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 
 // Public Auth Routes
 Route::get('health', function () {
     try {
         DB::select('select 1');
+
         return response()->json(['status' => 'ok']);
-    } catch (\Throwable) {
+    } catch (Throwable) {
         return response()->json(['status' => 'unavailable'], 503);
     }
 });
 
-Route::post('login', [SessionController::class, 'store'])->name('login');
-Route::post('register', [SessionController::class, 'register']);
+Route::get('catalogue/books', [CatalogueController::class, 'index']);
+Route::get('catalogue/books/{book}', [CatalogueController::class, 'show'])->whereNumber('book');
+Route::get('catalogue/categories', [CatalogueController::class, 'categories']);
+
+Route::post('login', [SessionController::class, 'store'])->middleware('throttle:20,1')->name('login');
+Route::post('register', [SessionController::class, 'register'])->middleware('throttle:6,1');
 Route::post('refresh', [SessionController::class, 'update']);
 
 // Protected Authenticated Routes
@@ -30,34 +38,45 @@ Route::middleware(['auth'])->group(function () {
     // Auth
     Route::post('logout', [SessionController::class, 'destroy']);
 
-    // Books
-    Route::get('books', [BookController::class, 'index']);
-    Route::get('books/{book}', [BookController::class, 'show']);
-    Route::post('books', [BookController::class, 'store'])->can('admin', Book::class);
-    Route::patch('books/{book}', [BookController::class, 'update'])->can('admin', Book::class);
-    Route::delete('books/{book}', [BookController::class, 'destroy'])->can('admin', Book::class);
+    Route::get('my-loans', [LoanRequestController::class, 'myLoans']);
+    Route::get('loan-requests', [LoanRequestController::class, 'index']);
+    Route::post('loan-requests', [LoanRequestController::class, 'store'])->middleware('throttle:20,1');
+    Route::delete('loan-requests/{loanRequest}', [LoanRequestController::class, 'cancel']);
 
-    // Categories
-    Route::apiResource('categories', CategoryController::class);
+    Route::post('user/profile', [UserController::class, 'updateProfile']);
+    Route::post('user/password', [UserController::class, 'updatePassword']);
 
-    // Members  
-    Route::get('members', [MemberController::class, 'index']);
-    Route::get('members/{member}', [MemberController::class, 'show']);
-    Route::post('members', [MemberController::class, 'store']);
-    Route::patch('members/{member}', [MemberController::class, 'update']);
-    Route::delete('members/{member}', [MemberController::class, 'destroy'])->can('admin', 'user');
+    Route::middleware('admin')->group(function () {
+        Route::get('admin/loan-requests', [LoanRequestController::class, 'adminIndex']);
+        Route::post('admin/loan-requests/{loanRequest}/approve', [LoanRequestController::class, 'approve']);
+        Route::post('admin/loan-requests/{loanRequest}/decline', [LoanRequestController::class, 'decline']);
 
-    // Checkouts
-    Route::get('checkouts', [CheckoutController::class, 'index']);
-    Route::get('checkouts/{checkout}', [CheckoutController::class, 'show']);
-    Route::post('checkouts', [CheckoutController::class, 'store']);
-    Route::delete('checkouts/{checkout}', [CheckoutController::class, 'destroy']);
-    Route::patch('checkouts/{checkout}', [CheckoutController::class, 'update']);
+        // Books
+        Route::get('books', [BookController::class, 'index']);
+        Route::get('books/{book}', [BookController::class, 'show']);
+        Route::post('books', [BookController::class, 'store'])->can('admin', Book::class);
+        Route::patch('books/{book}', [BookController::class, 'update'])->can('admin', Book::class);
+        Route::delete('books/{book}', [BookController::class, 'destroy'])->can('admin', Book::class);
 
-    // Dashboard Analytics
-    Route::get('analytics', [ReportController::class, 'index']);
+        // Categories
+        Route::apiResource('categories', CategoryController::class);
 
-    // User profile and password
-    Route::post('user/profile', [App\Http\Controllers\UserController::class, 'updateProfile']);
-    Route::post('user/password', [App\Http\Controllers\UserController::class, 'updatePassword']);
+        // Members
+        Route::get('members', [MemberController::class, 'index']);
+        Route::get('members/{member}', [MemberController::class, 'show']);
+        Route::post('members', [MemberController::class, 'store']);
+        Route::patch('members/{member}', [MemberController::class, 'update']);
+        Route::delete('members/{member}', [MemberController::class, 'destroy']);
+
+        // Checkouts
+        Route::get('checkouts', [CheckoutController::class, 'index']);
+        Route::get('checkouts/{checkout}', [CheckoutController::class, 'show']);
+        Route::post('checkouts', [CheckoutController::class, 'store']);
+        Route::delete('checkouts/{checkout}', [CheckoutController::class, 'destroy']);
+        Route::patch('checkouts/{checkout}', [CheckoutController::class, 'update']);
+
+        // Dashboard Analytics
+        Route::get('analytics', [ReportController::class, 'index']);
+
+    });
 });
